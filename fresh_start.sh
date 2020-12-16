@@ -65,17 +65,6 @@ sudo apt install -y guake
 BLUE "Installing VIM..."
 sudo apt install -y vim
 
-BLUE "Setting up the ultimate Vim configuration..."
-git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime
-sh ~/.vim_runtime/install_awesome_vimrc.sh
-
-BLUE "Making the 'scripts' directory..."
-mkdir home/*/scripts
-
-BLUE "Installing pack.sh..."
-wget https://github.com/bnsmcx/reimagined-octo-enigma/raw/master/pack.sh home/*/scripts
-cp home/*/scripts/pack.sh /usr/bin/pack
-
 BLUE "Installing tree..."
 sudo apt install -y tree
 
@@ -86,23 +75,23 @@ BLUE "Installing curl..."
 sudo apt install -y curl
 
 BLUE "Installing Signal..."
-    # 1. Install our official public software signing key
-    wget -O- https://updates.signal.org/desktop/apt/keys.asc |\
-      sudo apt-key add -
+# 1. Install our official public software signing key
+wget -O- https://updates.signal.org/desktop/apt/keys.asc |\
+  sudo apt-key add -
 
-    # 2. Add our repository to your list of repositories
-    echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main" |\
-      sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
+# 2. Add our repository to your list of repositories
+echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main" |\
+  sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
 
-    # 3. Update your package database and install signal
-    sudo apt update && sudo apt install -y signal-desktop
+# 3. Update your package database and install signal
+sudo apt update && sudo apt install -y signal-desktop
 
 BLUE "Installing pip..."
 sudo apt-get install -y python-pip
 sudo apt install -y python3-pip
 
 BLUE "Removing boilerplate home directories..."
-rmdir /home/*/Documents /home/*/Downloads /home/*/Music /home/*/Pictures /home/*/Public /home/*/Templates /home/*/Videos
+rmdir /home/*/Documents /home/*/Music /home/*/Pictures /home/*/Public /home/*/Templates /home/*/Videos
 
 BLUE "Installing openvpn..."
 sudo apt-get install -y openvpn
@@ -130,12 +119,13 @@ if [ "$Development" = true ]; then
 	# stuff to install
 	GREEN 'Provisioning for development...'
 
-    BLUE 'Installing Java JDK and JRE...'
-    sudo apt install default-jdk
-    sudo apt install default-jre
+	BLUE 'Installing Java JDK and JRE...'
+	sudo apt install -y default-jdk
+	sudo apt install -y default-jre
 
 	BLUE 'Installing Intellij IDEA...'
-	sudo snap install intellij-idea-educational --classic
+	sudo apt install -y snapd
+	sudo snap install intellij-idea-community --classic
 	export XDG_DATA_DIRS="$XDG_DATA_DIRS:/var/lib/snapd/desktop"
 	export PATH=/snap/bin:$PATH
 	echo "export PATH=/snap/bin:$PATH" >> ~/.zshrc
