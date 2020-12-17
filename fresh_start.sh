@@ -157,9 +157,7 @@ if [ "$CTFpentest" = true ]; then
 	su - ${USER}
 
 	BLUE 'Pulling the parrot/security docker image...'
-	docker pull parrotsec/security
 	mkdir $HOME/parrot
-
-	GREEN 'Log out and log back in to make your addition to the Docker user group take effect.'
+	docker pull parrotsec/security
 
 fi
