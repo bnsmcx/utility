@@ -5,20 +5,29 @@ Development='false'
 CTFpentest='false'
 Help='false'
 HashCrackServer='false'
+Initial='false'
 
-while getopts ':d:c:h:' 'OPTARG'; do
+while getopts ':d:c:h:s:i' 'OPTARG'; do
   case ${OPTARG} in
     'd') Development='true';;
     'c') CTFpentest='true';;
     'h') Help='true';;
     's') HashCrackServer='true';;
+    'i') Initial='true';;
   esac
 done
+
+if [ "$Development" = false ] && [ "$CTFpentest" = false ] && [ "$HashCrackServer" = false ] && [ "$Initial" = false ]; then
+	Help='true'
+fi
 
 if [ "$Help" = true ]; then
     echo 'Options are:'
     echo '    -d for development'
     echo '    -c for CTF/pentest'
+    echo '    -h for help'
+    echo '    -s for dedicated hashcat setup (Not implemented yet)'
+    echo '    -i for initial or default setup'
 fi
 
 # Define colors...
@@ -48,71 +57,67 @@ then
 	exit
 fi
 
-BLUE "Updating repositories..."
-sudo apt update
+# Initial or default provisioning 
+if [ "$Initial" = true ]; then
 
-BLUE "Upgrading system..."
-sudo apt upgrade -y
+	BLUE "Updating repositories..."
+	sudo apt update
 
-BLUE "Setting up zsh..."
-wget "https://raw.githubusercontent.com/bnsmcx/dotfiles/main/.zshrc"
-sudo apt install -y zsh
-chsh -s $(which zsh)
+	BLUE "Upgrading system..."
+	sudo apt upgrade -y
 
-BLUE "Installing guake..."
-sudo apt install -y guake
+	BLUE "Setting up zsh..."
+	wget "https://raw.githubusercontent.com/bnsmcx/dotfiles/main/.zshrc"
+	sudo apt install -y zsh
+	chsh -s $(which zsh)
 
-BLUE "Installing VIM..."
-sudo apt install -y vim
+	BLUE "Installing guake..."
+	sudo apt install -y guake
 
-BLUE "Installing tree..."
-sudo apt install -y tree
+	BLUE "Installing VIM..."
+	sudo apt install -y vim
 
-BLUE "Installing git..."
-sudo apt install -y git
+	BLUE "Installing tree..."
+	sudo apt install -y tree
 
-BLUE "Installing curl..."
-sudo apt install -y curl
+	BLUE "Installing git..."
+	sudo apt install -y git
 
-BLUE "Installing Signal..."
-# 1. Install our official public software signing key
-wget -O- https://updates.signal.org/desktop/apt/keys.asc |\
-  sudo apt-key add -
+	BLUE "Installing curl..."
+	sudo apt install -y curl
 
-# 2. Add our repository to your list of repositories
-echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main" |\
-  sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
+	BLUE "Installing Signal..."
+	# 1. Install our official public software signing key
+	wget -O- https://updates.signal.org/desktop/apt/keys.asc |\
+	  sudo apt-key add -
 
-# 3. Update your package database and install signal
-sudo apt update && sudo apt install -y signal-desktop
+	# 2. Add our repository to your list of repositories
+	echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main" |\
+	  sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
 
-BLUE "Installing pip..."
-sudo apt-get install -y python-pip
-sudo apt install -y python3-pip
+	# 3. Update your package database and install signal
+	sudo apt update && sudo apt install -y signal-desktop
 
-BLUE "Removing boilerplate home directories..."
-rmdir /home/*/Documents /home/*/Music /home/*/Pictures /home/*/Public /home/*/Templates /home/*/Videos
+	BLUE "Installing pip..."
+	sudo apt-get install -y python-pip
+	sudo apt install -y python3-pip
 
-BLUE "Installing openvpn..."
-sudo apt-get install -y openvpn
+	BLUE "Removing boilerplate home directories..."
+	rmdir /home/*/Documents /home/*/Music /home/*/Pictures /home/*/Public /home/*/Templates /home/*/Videos
 
-BLUE "Installing pinta..."
-sudo apt-get install -y pinta
+	BLUE "Installing openvpn..."
+	sudo apt-get install -y openvpn
 
-BLUE "VirtualBox..."
-sudo apt-get install -y virtualbox
+	BLUE "Installing pinta..."
+	sudo apt-get install -y pinta
 
-BLUE "Installing Joplin..."
-wget -O - https://raw.githubusercontent.com/laurent22/joplin/master/Joplin_install_and_update.sh | bash --allow-root
+	BLUE "VirtualBox..."
+	sudo apt-get install -y virtualbox
 
-BLUE "Installing xclip..."
-sudo apt install -y xclip
-grep "alias xclip" ~/.bashrc
-if [ $? -eq 1 ]
-then
-	echo "alias xclip='xclip -selection clipboard'" >> ~/.bashrc
+	BLUE "Installing Joplin..."
+	wget -O - https://raw.githubusercontent.com/laurent22/joplin/master/Joplin_install_and_update.sh | bash --allow-root
+
 fi
-
 
 # Provisioning for development
 if [ "$Development" = true ]; then
@@ -125,6 +130,8 @@ if [ "$Development" = true ]; then
 
 	BLUE 'Installing Intellij IDEA...'
 	sudo apt install -y snapd
+	# add /snap/bin to PATH
+	echo "PATH=/snap/bin:$PATH" >> $HOME/.profile
 	sudo snap install intellij-idea-community --classic
 	export XDG_DATA_DIRS="$XDG_DATA_DIRS:/var/lib/snapd/desktop"
 	export PATH=/snap/bin:$PATH
@@ -139,49 +146,20 @@ if [ "$CTFpentest" = true ]; then
 	# stuff to install
 	GREEN 'Provisioning for CTF/Pentesting...'
 
-	BLUE "Installing princeprocessor..."
-	sudo apt install -y princeprocessor
+	BLUE 'Installing docker...'
+	sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+	sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+	sudo apt update
+	apt-cache policy docker-ce
+	sudo apt install -y docker-ce
+	sudo usermod -aG docker ${USER}
+	su - ${USER}
 
-    BLUE "Getting LinEnum.sh..."
-	wget -O ~/scripts/LinEnum.sh "https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh"
+	BLUE 'Pulling the parrot/security docker image...'
+	docker pull parrotsec/security
+	mkdir $HOME/parrot
 
-	BLUE "Getting linpeas.sh..."
-	wget -O ~/scripts/linpeas.sh "https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/raw/master/linPEAS/linpeas.sh"
-
-	BLUE "Installing steghide..."
-	sudo apt install -y steghide
-
-	BLUE "Installing zsteg..."
-	sudo apt install -y ruby
-	sudo gem install zsteg
-
-	BLUE "Installing exiftool..."
-	sudo apt install -y exiftool
-
-	BLUE "Installing stegoveritas..."
-	pip3 install stegoveritas
-	sudo apt install -y libimage-exiftool-perl
-	sudo apt install -y libexempi*
-	sudo apt install -y p7zip-full
-	sudo apt install -y foremost
-	sudo apt install -y steghide
-	echo "# Add .local/bin to PATH"
-	echo "export PATH=~/.local/bin:$PATH" >> ~/.bashrc
-
-	BLUE "Installing sonic-visualizer..."
-	sudo apt install -y sonic-visualiser
-
-	BLUE "Installing ghidra..."
-	wget "https://www.ghidra-sre.org/ghidra_9.1.2_PUBLIC_20200212.zip"
-	unzip ghidra_9.1.2_PUBLIC_20200212.zip
-	rm ghidra_9.1.2_PUBLIC_20200212.zip
-	echo "# add ghidra to the path" >> ~/.bashrc
-	echo "export PATH=/home/daisy/ghidra_9.1.2_PUBLIC:$PATH" >> ~/.bashrc
-
-	BLUE "Installing pwncat..."
-	pip3 install git+https://github.com/calebstewart/pwncat.git
-
-	BLUE "Installing gobuster..."
-	sudo apt install gobuster
+	GREEN 'Log out and log back in to make your addition to the Docker user group take effect.'
 
 fi
