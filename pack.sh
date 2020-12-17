@@ -5,5 +5,5 @@ cd ..
 zip $dir.zip $dir/*
 rm -r $dir
 echo "Packed $dir. . . ."
-exec bash
+exec zsh 
 
