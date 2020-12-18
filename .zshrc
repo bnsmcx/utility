@@ -188,7 +188,8 @@ fi
 alias ll='ls -l'
 alias la='ls -A'
 alias l='ls -CF'
-alias parrot='docker run -it --network host -v $PWD/work:/work parrotsec/security'
+alias parrot='docker run -it --network host -v $PWD/parrot:/work parrotsec/security'
+alias f='find / 2>/dev/null | grep'
 
 # enable auto-suggestions based on the history
 if [ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
