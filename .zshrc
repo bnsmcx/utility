@@ -185,7 +185,7 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # some more ls aliases
-alias ll='ls -l'
+alias ll='ls -al'
 alias la='ls -A'
 alias l='ls -CF'
 alias parrot='docker run -it --network host -v $PWD/parrot:/work parrotsec/security'
