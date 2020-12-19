@@ -115,7 +115,7 @@ if [ "$Initial" = true ]; then
 	sudo apt-get install -y virtualbox
 
 	BLUE "Installing Joplin..."
-	wget -O - https://raw.githubusercontent.com/laurent22/joplin/master/Joplin_install_and_update.sh | bash --allow-root
+	wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | bash
 
 fi
 
@@ -154,10 +154,11 @@ if [ "$CTFpentest" = true ]; then
 	apt-cache policy docker-ce
 	sudo apt install -y docker-ce
 	sudo usermod -aG docker ${USER}
-	su - ${USER}
 
 	BLUE 'Pulling the parrot/security docker image...'
 	mkdir $HOME/parrot
 	docker pull parrotsec/security
+
+	RED 'Log out and then back in for addition of user to docker group to take effect...'
 
 fi
