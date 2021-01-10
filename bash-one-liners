@@ -1,6 +1,11 @@
 
+<<<<<<< HEAD
 # Searches the entire filesystem for 'searchWord' sends errors to /dev/null:
 find / 2>/dev/null | grep searchWord
+=======
+# Searches the entire filesystem for [search_word] sends errors to /dev/null:
+find / 2>/dev/null | grep [search_word]
+>>>>>>> 0de59b6371171445c64431b1e173d14aa9e44282
 
 # Sets the passord for all users to 'newPassword'
 # Omit sudo if running as root
