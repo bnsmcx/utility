@@ -1,0 +1,12 @@
+
+# Searches the entire filesystem for 'searchWord' sends errors to /dev/null:
+find / 2>/dev/null | grep searchWord
+
+# Sets the passord for all users to 'newPassword'
+# Omit sudo if running as root
+# chpasswd may not be in all user's PATH, check /usr/sbin 
+cat /etc/passwd | cut -d":" -f1 | xargs -I % echo %:newPassword | sudo chpasswd
+
+# Finds and deletes all files named "*target*"
+# Wildcards are in play, omit for a more targeted approach
+sudo find / -name "*target*" -exec rm -rf {} \;
