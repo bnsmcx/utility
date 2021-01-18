@@ -66,6 +66,33 @@ then
 	exit
 fi
 
+# Defining and exporting aliases for useful one-liner commands
+if [ "$set_aliases" = true ]; then
+	
+	BLUE 'Aliases set...'
+	echo
+
+	GREEN 'Searches the entire filesystem for '\''searchWord'\'' sends errors to /dev/null:'
+	GREEN 'Usage: "$f searchTerm"'
+	echo 'alias f=find / 2>/dev/null | grep'
+	alias f='find / 2>/dev/null | grep'
+	echo
+	
+	GREEN 'Removes all files matching a given target name, wildcards are in play, case sensitive'
+	GREEN 'Usage: "$nuke target*"'
+	sudo find / -name "*target*" -exec rm -rf {} \;
+
+	# Find every file or folder owned by 'USER_NAME' and move them into a single archive
+	# Some versions of xargs will need '-i%' as the syntax for the xargs varible
+	echo USER_NAME | xargs -I % sh -c 'find / -type f -user % -exec mv {} /home/% \; && zip -r /home/%.zip /home/% && rm -r /home/%'
+
+	# Find and kill every process owned by 'USER_NAME'
+	pkill -9 -u `id -u USER_NAME`
+
+	# Set all interfaces up or down
+	ip a | grep mtu | cut -d":" -f2 | xargs -I % ip link set % u
+fi
+
 # set passwords for all users on the system
 if [ "$set_passwords" = true ]; then
 	BLUE 'Test trigger $set_passwords'
@@ -74,12 +101,6 @@ fi
 # auto_secure performs all default actions to lock down the box 
 if [ "$auto_secure" = true ]; then
 	BLUE 'Test trigger $auto_secure'
-fi
-
-
-# Defining and exporting aliases for useful one-liner commands
-if [ "$set_aliases" = true ]; then
-	BLUE 'Test trigger $set_aliases'
 fi
 
 # Move all files owned by a user to their home directory and zip it
