@@ -16,3 +16,7 @@ echo USER_NAME | xargs -I % sh -c 'find / -type f -user % -exec mv {} /home/% \;
 
 # Find and kill every process owned by 'USER_NAME'
 pkill -9 -u `id -u USER_NAME` 
+
+# Set all interfaces up or down
+ip a | grep mtu | cut -d":" -f2 | xargs -I % ip link set % up
+new line of text this is a test for the checksum

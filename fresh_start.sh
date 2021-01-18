@@ -115,7 +115,7 @@ if [ "$Initial" = true ]; then
 	sudo apt-get install -y virtualbox
 
 	BLUE "Installing Joplin..."
-	wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | bash
+	wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh --allow-root | bash
 
 fi
 
@@ -145,6 +145,9 @@ fi
 if [ "$CTFpentest" = true ]; then
 	# stuff to install
 	GREEN 'Provisioning for CTF/Pentesting...'
+
+	BLUE 'Installing wireshark...'
+	sudo apt install -y wireshark
 
 	BLUE 'Installing docker...'
 	sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
