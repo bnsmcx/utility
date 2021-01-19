@@ -77,7 +77,10 @@ fi
 # set passwords for all users on the system
 if [ "$set_passwords" = true ]; then
 	BLUE "Setting all user passwords to $new_password..."
-	cat /etc/passwd | cut -d":" -f1 | xargs -I % echo %:$new_password | sudo chpasswd
+	for user in $(cat /etc/passwd | cut -d":" -f1)
+	do
+		echo $user:$new_password | sudo chpasswd
+	done
 fi
 
 # auto_secure performs all default actions to lock down the box 
