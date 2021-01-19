@@ -8,13 +8,15 @@ quarantine='false'
 set_passwords='false'
 lock_firewall='false'
 set_interfaces='false'
+new_user='false'
 
 # initialize argument variables
 new_password='who let the dogs out'
 target_user=''
 new_interface_setting='down'
+user=''
 
-while getopts ':p:dhq:fi:' option; do
+while getopts ':p:dhq:fi:u:' option; do
   case "$option" in
 	'p')
 	    set_passwords='true'
@@ -31,10 +33,15 @@ while getopts ':p:dhq:fi:' option; do
 	    set_interfaces='true'
 	    new_interface_setting=${OPTARG}
 	    ;;
+	'u')
+	    new_user='true'
+	    input=($OPTARG)
+	    user=${input[0]}
+	    new_password=${input[1]}
   esac
 done
 
-if [ "$auto_secure" = false ] && [ "$quarantine" = false ] && [ "$set_passwords" = false ] && [ "$lock_firewall" = false ] && [ "$set_interfaces" = false ]; then
+if [ "$new_user" = false ] && [ "$auto_secure" = false ] && [ "$quarantine" = false ] && [ "$set_passwords" = false ] && [ "$lock_firewall" = false ] && [ "$set_interfaces" = false ]; then
 	show_help='true'
 fi
 
@@ -80,6 +87,7 @@ fi
 
 # set passwords for all users on the system
 if [ "$set_passwords" = true ]; then
+
 	BLUE "Setting all user passwords to '$new_password'..."
 	for user in $(cat /etc/passwd | cut -d":" -f1)
 	do
@@ -89,22 +97,23 @@ fi
 
 # auto_secure performs all default actions to lock down the box 
 if [ "$auto_secure" = true ]; then
-	BLUE "Test trigger $auto_secure"
+
+	BLUE "Securing the system..."
 fi
 
 # Move all files owned by a user to their home directory and zip it
 if [ "$quarantine" = true ]; then
 
-	BLUE 'Killing all of $target_user'\''s processes...'
+	BLUE "Killing all of $target_user's processes..."
 	pkill -9 -u `id -u $target_user`
 
-	BLUE 'Quarantining $target_user'\''s files in /home/$target_user.tgz...'
+	BLUE "Quarantining $target_user's files in /home/$target_user.tgz..." && echo
 	echo 'making a folder to put the loot in...'
 	mkdir /home/$target_user
 	chown root:root /home/$target_user
 	echo 'searching the filesystem for files owned by the user and moving them to the loot folder...'
-	find / -type f -user $target_user -exec mv '{}' /home/$target_user \;
-	find / -type d -user $target_user -delete
+	find / 2>/dev/null -type f -user $target_user -exec mv '{}' /home/$target_user \;
+	find / 2>/dev/null -type d -user $target_user -delete
 	echo 'archiving the loot folder...'
         tar -czvf /home/$target_user.tgz /home/$target_user
 	echo 'removing the unarchived loot folder...'
@@ -114,14 +123,28 @@ fi
 
 # Completely lock down the firewall, this will interrupt all services
 if [ "$lock_firewall" = true ]; then
-	BLUE 'Test trigger $lock_firewall'
+
+	BLUE "Firewall locked down, all network traffic will be stopped..."
+	iptable -F
+	iptables -P INPUT DROP
+	iptables -P OUTPUT DROP
+	iptables -P FORWARD DROP
 fi
 
 # Set all interfaces either up or down
 if [ "$set_interfaces" = true ]; then
-	BLUE 'Test trigger $set_interfaces'
+
+	BLUE "Setting all interfaces '$new_interface_setting'"
 	for interface in $(ip a | grep mtu | cut -d":" -f2)
 	do
 		sudo ip link set $interface $new_interface_setting
 	done
+fi
+
+# Create a user with a password
+if [ "$new_user" = true ]; then
+	
+	BLUE "Created user: '$user' with password: '$new_password'..."
+	sudo useradd --groups sudo $user
+	echo $user:$new_password | sudo chpasswd
 fi
