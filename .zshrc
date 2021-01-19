@@ -188,7 +188,7 @@ fi
 alias ll='ls -al'
 alias la='ls -A'
 alias l='ls -CF'
-alias parrot='docker run -it --network host -v $PWD/parrot:/work parrotsec/security'
+alias parrot='sudo docker run -it --network host -v $PWD/parrot:/work parrotsec/security'
 alias f='find / 2>/dev/null | grep'
 
 # enable auto-suggestions based on the history
