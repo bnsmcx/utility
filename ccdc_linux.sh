@@ -50,13 +50,13 @@ if [ "$show_help" = true ]; then
     echo ''
     echo 'Options are:'
     echo ''
-    echo '    -p set_passwords    -- sets every user'\'s' password: "sudo ccdc-linux.sh -p newP@ssw0rd"'
-    echo '    -d auto_secure      -- default initial securing of the system'
-    echo '    -h show_help        -- this'
-    echo '    -q quarantine       -- moves all files owned by a user into their home directory and then zips it: "sudo ccdc-linux.sh -q user"'
-    echo '    -f lock_firewall    -- completely locks down the firewall, all services will be affected'
-    echo '    -i set_interfaces   -- quickly sets all interfaces up/down: sudo ./ccdc_linux.sh -i down <-or-> sudo ccdc -i down'
-    echo '    -u new_user         -- adds a new user with provided password, note quotes: sudo ./ccdc_linux.sh -u "user password" '
+    echo '    -p set_passwords       sets every user'\'s' password:  -p newP@ssw0rd'
+    echo '    -d auto_secure         default initial securing of the system'
+    echo '    -h show_help           this'
+    echo '    -q quarantine          kills a user'\'s' processes and archives their files in /home:  -q user'
+    echo '    -f lock_firewall       completely locks down the firewall, all services will be affected'
+    echo '    -i set_interfaces      quickly sets all interfaces up/down:  -i up'
+    echo '    -u new_user            adds a new user with provided password, note quotes:  -u "user password"'
 fi
 
 # Define colors...
