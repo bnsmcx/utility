@@ -91,7 +91,10 @@ fi
 # Move all files owned by a user to their home directory and zip it
 if [ "$quarantine" = true ]; then
 	BLUE "Quarantining $target_user..."
-	echo $target_user | xargs -I % sh -c 'find / -type f -user % -exec mv {} /home/% \; && zip -r /home/%.zip /home/% && rm -r /home/%'
+	mkdir /home/$target_user
+	find / 2>/dev/null -type f -user $target_user -exec mv {} /home/$target_user \;
+        tar -czvf /home/$target_user.tgz /home/$target_user
+        rm -r /home/$target_user
 fi
 
 # Completely lock down the firewall, this will interrupt all services
