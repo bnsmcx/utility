@@ -55,7 +55,8 @@ if [ "$show_help" = true ]; then
     echo '    -h show_help        -- this'
     echo '    -q quarantine       -- moves all files owned by a user into their home directory and then zips it: "sudo ccdc-linux.sh -q user"'
     echo '    -f lock_firewall    -- completely locks down the firewall, all services will be affected'
-    echo '    -i set_interfaces   -- quickly sets all interfaces up/down: "sudo ccdc-linux.sh -i down" -or- "sudo ccdc -i down"'
+    echo '    -i set_interfaces   -- quickly sets all interfaces up/down: sudo ./ccdc_linux.sh -i down <-or-> sudo ccdc -i down'
+    echo '    -u new_user         -- adds a new user with provided password, note quotes: sudo ./ccdc_linux.sh -u "user password" '
 fi
 
 # Define colors...
