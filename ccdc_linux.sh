@@ -80,7 +80,7 @@ fi
 
 # set passwords for all users on the system
 if [ "$set_passwords" = true ]; then
-	BLUE "Setting all user passwords to $new_password..."
+	BLUE "Setting all user passwords to '$new_password'..."
 	for user in $(cat /etc/passwd | cut -d":" -f1)
 	do
 		echo $user:$new_password | sudo chpasswd
@@ -89,16 +89,27 @@ fi
 
 # auto_secure performs all default actions to lock down the box 
 if [ "$auto_secure" = true ]; then
-	BLUE 'Test trigger $auto_secure'
+	BLUE "Test trigger $auto_secure"
 fi
 
 # Move all files owned by a user to their home directory and zip it
 if [ "$quarantine" = true ]; then
-	BLUE "Quarantining $target_user..."
+
+	BLUE 'Killing all of $target_user'\''s processes...'
+	pkill -9 -u `id -u $target_user`
+
+	BLUE 'Quarantining $target_user'\''s files in /home/$target_user.tgz...'
+	echo 'making a folder to put the loot in...'
 	mkdir /home/$target_user
-	find / 2>/dev/null -type f -user $target_user -exec mv {} /home/$target_user \;
+	chown root:root /home/$target_user
+	echo 'searching the filesystem for files owned by the user and moving them to the loot folder...'
+	find / -type f -user $target_user -exec mv '{}' /home/$target_user \;
+	find / -type d -user $target_user -delete
+	echo 'archiving the loot folder...'
         tar -czvf /home/$target_user.tgz /home/$target_user
+	echo 'removing the unarchived loot folder...'
         rm -r /home/$target_user
+
 fi
 
 # Completely lock down the firewall, this will interrupt all services
