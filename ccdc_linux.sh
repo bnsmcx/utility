@@ -9,6 +9,7 @@ set_passwords='false'
 lock_firewall='false'
 set_interfaces='false'
 new_user='false'
+validate_checksums='false'
 
 # initialize argument variables
 new_password='who let the dogs out'
@@ -16,7 +17,7 @@ target_user=''
 new_interface_setting='down'
 user=''
 
-while getopts ':p:dhq:fi:u:' option; do
+while getopts ':p:dhq:fi:u:v' option; do
   case "$option" in
 	'p')
 	    set_passwords='true'
@@ -38,10 +39,12 @@ while getopts ':p:dhq:fi:u:' option; do
 	    input=($OPTARG)
 	    user=${input[0]}
 	    new_password=${input[1]}
+	    ;;
+	'v') validate_checksums='true';;
   esac
 done
 
-if [ "$new_user" = false ] && [ "$auto_secure" = false ] && [ "$quarantine" = false ] && [ "$set_passwords" = false ] && [ "$lock_firewall" = false ] && [ "$set_interfaces" = false ]; then
+if [ "$validate_checksums" = false ] && [ "$new_user" = false ] && [ "$auto_secure" = false ] && [ "$quarantine" = false ] && [ "$set_passwords" = false ] && [ "$lock_firewall" = false ] && [ "$set_interfaces" = false ]; then
 	show_help='true'
 fi
 
@@ -57,6 +60,8 @@ if [ "$show_help" = true ]; then
     echo '    -f lock_firewall       completely locks down the firewall, all services will be affected'
     echo '    -i set_interfaces      quickly sets all interfaces up/down:  -i up'
     echo '    -u new_user            adds a new user with provided password, note quotes:  -u "user password"'
+    echo "    -v validate_checksums  Check to make sure checksums of critical files haven't changed"
+    
 fi
 
 # Define colors...
@@ -148,4 +153,37 @@ if [ "$new_user" = true ]; then
 	BLUE "Created user: '$user' with password: '$new_password'..."
 	sudo useradd --groups sudo $user
 	echo $user:$new_password | sudo chpasswd
+fi
+
+# Get the checksums for a list of files, compare to known hashes, alert user of differences
+if [ "$validate_checksums" = true ]; then
+
+	if test -f /root/reference_checksums; then
+		BLUE "Comparing current checksums of critical files to those previously obtained..."
+	else
+		BLUE "Capturing initial checksums of critical files..."
+	fi
+	echo
+	BLUE "The reference checksums are always stored at /root/reference_checksums" && echo
+
+	# add critical files or directories to be checked here using absolute paths
+	# wrapped in quotes and separated by a single space
+	declare -a critical_items=("/etc" "/tmp")
+	for item in "${critical_items[@]}"; 
+	do
+		for file in $(sudo find $item -type f)
+		do
+			temp_string="$file : $(cat $file | md5sum)"
+			echo $temp_string >> current_checksums
+		done
+	done
+	if test -f /root/reference_checksums; then
+		RED "Checking for differences..." && echo
+		diff -qs /root/reference_checksums current_checksums
+		diff -y --suppress-common-lines /root/reference_checksums current_checksums
+		rm current_checksums
+	else
+		mv current_checksums /root/reference_checksums
+		GREEN "Successfully stashed the reference checksums in /root/reference_checksums" && echo
+	fi
 fi
