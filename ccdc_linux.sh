@@ -12,8 +12,9 @@ set_interfaces='false'
 # initialize argument variables
 new_password='who let the dogs out'
 target_user=''
+new_interface_setting='down'
 
-while getopts ':p:dhq:fi' option; do
+while getopts ':p:dhq:fi:' option; do
   case "$option" in
 	'p')
 	    set_passwords='true'
@@ -26,7 +27,10 @@ while getopts ':p:dhq:fi' option; do
 	    target_user=${OPTARG}
 	    ;;
     	'f') lock_firewall='true';;
-    	'i') set_interfaces='true';;
+    	'i') 
+	    set_interfaces='true'
+	    new_interface_setting=${OPTARG}
+	    ;;
   esac
 done
 
@@ -105,4 +109,8 @@ fi
 # Set all interfaces either up or down
 if [ "$set_interfaces" = true ]; then
 	BLUE 'Test trigger $set_interfaces'
+	for interface in $(ip a | grep mtu | cut -d":" -f2)
+	do
+		sudo ip link set $interface $new_interface_setting
+	done
 fi
