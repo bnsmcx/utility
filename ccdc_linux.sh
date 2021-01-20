@@ -213,6 +213,10 @@ if [ "$reset_binaries" = true ]; then
 	fi
 	for directory in $(sudo find /root/binaries -type d | cut -d"/" -f4-);
 	do
-		echo $directory
+		if [[ $(ls -l /root/binaries/$directory | cut -c 1 | grep -v d | grep -v t) ]]; then
+			echo $directory
+		else
+			continue
+		fi
 	done
 fi
