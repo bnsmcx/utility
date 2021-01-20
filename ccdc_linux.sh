@@ -201,7 +201,7 @@ if [ "$backup_binaries" = true ]; then
 	for directory in $PATH;
 	do
 		mkdir -p /root/binaries$directory
-		sudo cp -r $directory /root/binaries$directory
+		sudo cp -r $directory/* /root/binaries$directory
 	done
 fi
 
