@@ -214,7 +214,8 @@ if [ "$reset_binaries" = true ]; then
 	for directory in $(sudo find /root/binaries -type d | cut -d"/" -f4-);
 	do
 		if [[ $(ls -l /root/binaries/$directory | cut -c 1 | grep -v d | grep -v t) ]]; then
-			echo $directory
+			sudo cp -r "/$directory/*" "/$directory"
+
 		else
 			continue
 		fi
