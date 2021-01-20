@@ -10,6 +10,8 @@ lock_firewall='false'
 set_interfaces='false'
 new_user='false'
 validate_checksums='false'
+backup_binaries='false'
+reset_binaries='false'
 
 # initialize argument variables
 new_password='who let the dogs out'
@@ -17,7 +19,7 @@ target_user=''
 new_interface_setting='down'
 user=''
 
-while getopts ':p:dhq:fi:u:v' option; do
+while getopts ':p:dhq:fi:u:vbB' option; do
   case "$option" in
 	'p')
 	    set_passwords='true'
@@ -41,10 +43,12 @@ while getopts ':p:dhq:fi:u:v' option; do
 	    new_password=${input[1]}
 	    ;;
 	'v') validate_checksums='true';;
+	'b') backup_binaries='true';;
+	'B') reset_binaries='true';;
   esac
 done
 
-if [ "$validate_checksums" = false ] && [ "$new_user" = false ] && [ "$auto_secure" = false ] && [ "$quarantine" = false ] && [ "$set_passwords" = false ] && [ "$lock_firewall" = false ] && [ "$set_interfaces" = false ]; then
+if [ "$reset_binaries" = false ] && [ "$backup_binaries" = false ] && [ "$validate_checksums" = false ] && [ "$new_user" = false ] && [ "$auto_secure" = false ] && [ "$quarantine" = false ] && [ "$set_passwords" = false ] && [ "$lock_firewall" = false ] && [ "$set_interfaces" = false ]; then
 	show_help='true'
 fi
 
@@ -60,7 +64,9 @@ if [ "$show_help" = true ]; then
     echo '    -f lock_firewall       completely locks down the firewall, all services will be affected'
     echo '    -i set_interfaces      quickly sets all interfaces up/down:  -i up'
     echo '    -u new_user            adds a new user with provided password, note quotes:  -u "user password"'
-    echo "    -v validate_checksums  Check to make sure checksums of critical files haven't changed"
+    echo '    -v validate_checksums  Check to make sure checksums of critical files haven'\''t changed'
+    echo '    -b backup_binaries     Archives a copy of all binaries in the user'\''path, archive is in /root'
+    echo '    -B reset_binaries      Replaces all binaries in user'\''s path with the archived copy'
     
 fi
 
@@ -91,6 +97,12 @@ then
 	exit
 fi
 
+# auto_secure performs all default actions to lock down the box 
+if [ "$auto_secure" = true ]; then
+
+	BLUE "Securing the system..."
+fi
+
 # set passwords for all users on the system
 if [ "$set_passwords" = true ]; then
 
@@ -99,12 +111,6 @@ if [ "$set_passwords" = true ]; then
 	do
 		echo $user:$new_password | sudo chpasswd
 	done
-fi
-
-# auto_secure performs all default actions to lock down the box 
-if [ "$auto_secure" = true ]; then
-
-	BLUE "Securing the system..."
 fi
 
 # Move all files owned by a user to their home directory and zip it
@@ -186,4 +192,27 @@ if [ "$validate_checksums" = true ]; then
 		mv current_checksums /root/reference_checksums
 		GREEN "Successfully stashed the reference checksums in /root/reference_checksums" && echo
 	fi
+fi
+
+if [ "$backup_binaries" = true ]; then
+	BLUE "Backing up binaries..." && echo
+	sudo mkdir /root/binaries
+	IFS=:
+	for directory in $PATH;
+	do
+		mkdir -p /root/binaries$directory
+		sudo cp -r $directory /root/binaries$directory
+	done
+fi
+
+if [ "$reset_binaries" = true ]; then
+	BLUE "Resetting binaries from backup..." && echo
+	if test ! -d /root/binaries; then
+		RED 'No backup binaries found...'
+		exit 1
+	fi
+	for directory in $(sudo find /root/binaries -type d | cut -d"/" -f4-);
+	do
+		echo $directory
+	done
 fi
