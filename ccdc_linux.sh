@@ -74,10 +74,10 @@ if [ "$show_help" = true ]; then
     echo
     echo 'Example usages for flags requiring arguments:'
     echo 
-    echo '		sudo ./ccdc_linux.sh -p "newpassword"       -- Quotes required w/ space in password'
-    echo '		sudo ./ccdc_linux.sh -q username'
-    echo '		sudo ./ccdc_linux.sh -i down'
-    echo '		sudo ./ccdc_linux.sh -u "username password" -- Quotes required'
+    echo '		sudo bash ccdc_linux.sh -p "newpassword"       -- Quotes required w/ space in password'
+    echo '		sudo bash ccdc_linux.sh -q username'
+    echo '		sudo bash ccdc_linux.sh -i down'
+    echo '		sudo bash ccdc_linux.sh -u "username password" -- Quotes required'
     
     
 fi
@@ -115,26 +115,26 @@ if [ "$auto_secure" = true ]; then
 	BLUE "Performing the scripted default actions to secure the system..."
 	
 	# Bring down all network interfaces
-	sudo ./ccdc_linux.sh -i down
+	sudo bash ccdc_linux.sh -i down
 	ip addr
 	GREEN "Network interfaces are now down..."
 
 	# Change all user passwords
-	sudo ./ccdc_linux.sh -p "yoda has green ears"
+	sudo bash ccdc_linux.sh -p "yoda has green ears"
 	GREEN "All user passwords changed..."
 
 	# Create backup accounts
-	sudo ./ccdc_linux.sh -u "han SpaceSmuggler69"
-	sudo ./ccdc_linus.sh -u "kylo FeistyFellaLOL"
+	sudo bash ccdc_linux.sh -u "han SpaceSmuggler69"
+	sudo bash ccdc_linus.sh -u "kylo FeistyFellaLOL"
 	sudo tail /etc/passwd
 	GREEN "Created backup users..."
 
 	# Backup Binaries
-	sudo ./ccdc_linux.sh -b
+	sudo bash ccdc_linux.sh -b
 	GREEN "Created backup of all binaries..."
 
 	# Capture initial checksum of critical files
-	sudo ./ccdc_linux.sh -v
+	sudo bash ccdc_linux.sh -v
 	GREEN "Initial critical file checksums captured..."
 
 	# Leave the user looking at /etc/passwd
