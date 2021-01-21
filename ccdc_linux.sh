@@ -65,8 +65,12 @@ if [ "$show_help" = true ]; then
     echo '    -i set_interfaces      quickly sets all interfaces up/down:  -i up'
     echo '    -u new_user            adds a new user with provided password, note quotes:  -u "user password"'
     echo '    -v validate_checksums  Check to make sure checksums of critical files haven'\''t changed'
-    echo '    -b backup_binaries     Archives a copy of all binaries in the user'\''path, archive is in /root'
-    echo '    -B reset_binaries      Replaces all binaries in user'\''s path with the archived copy'
+    echo '    -b backup_binaries     Archives a copy of all binaries in /etc/bin, sets PATH to use these,'
+    echo '                             also creates /tmp/bin.tar.gz and /tmp/bin.enc '\('w/ password you set'\)''
+    echo '                             It probably makes sense to obfuscate and hide copies of these.'
+    echo '    -B reset_binaries      Removes and replaces /tmp/bin and /tmp/tar.gz with fresh copeis from'
+    echo '                             /tmp/bin.enc, if you'\''ve hidden a copy of bin.enc you must move it'
+    echo '                             and rename it to /tmp/bin.enc'
     
 fi
 
@@ -174,7 +178,7 @@ if [ "$validate_checksums" = true ]; then
 
 	# add critical files or directories to be checked here using absolute paths
 	# wrapped in quotes and separated by a single space
-	declare -a critical_items=("/etc" "/tmp")
+	declare -a critical_items=("/etc" "/tmp/bin" "/bin" "/sbin")
 	for item in "${critical_items[@]}"; 
 	do
 		for file in $(sudo find $item -type f)
@@ -195,30 +199,33 @@ if [ "$validate_checksums" = true ]; then
 fi
 
 if [ "$backup_binaries" = true ]; then
-	BLUE "Backing up binaries..." && echo
+	BLUE "Backing up binaries..." 
+	BLUE "This could take a minute or so..." && echo
 	sudo mkdir /tmp/bin
 	IFS=:
 	for directory in $PATH;
 	do
 		sudo cp -r $directory/* /tmp/bin
 	done
+	
 	tar czf /tmp/bin.tar.gz /tmp/bin
-	openssl enc -e -aes-256-cbc -pbkdf2 -in /tmp/bin.tar.gz -out /tmp/b.enc 
+	openssl enc -e -aes-256-cbc -pbkdf2 -in /tmp/bin.tar.gz -out /tmp/bin.enc 
+	GREEN 'Take a note of the following md5 checksum for bin.enc...'
+	md5sum /tmp/bin.enc
+	export PATH=/tmp/bin
+	GREEN 'Your path is now set to use the backup binaries located at /tmp/bin'
 fi
 
 if [ "$reset_binaries" = true ]; then
 	BLUE "Resetting binaries from backup..." && echo
-	if test ! -d /root/binaries; then
+	if test ! -f /tmp/bin.enc; then
 		RED 'No backup binaries found...'
+		RED 'This script looks for /tmp/bin.enc'
+		RED 'Put the backup file there.'
 		exit 1
 	fi
-	for directory in $(sudo find /root/binaries -type d | cut -d"/" -f4-);
-	do
-		if [[ $(ls -l /root/binaries/$directory | cut -c 1 | grep -v d | grep -v t) ]]; then
-			sudo cp -r "/$directory/*" "/$directory"
-
-		else
-			continue
-		fi
-	done
+	
+	sudo rm -f /tmp/bin/* /tmp/bin.tar.gz
+	openssl enc -d -aes-256-cbc -pbkdf2 -in /tmp/bin.enc -out /tmp/bin.tar.gz
+	tar xzf /tmp/bin.tar.gz -C /
 fi
