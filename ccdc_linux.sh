@@ -57,13 +57,13 @@ if [ "$show_help" = true ]; then
     echo ''
     echo 'Options are:'
     echo ''
-    echo '    -p set_passwords       sets every user'\'s' password:  -p newP@ssw0rd'
-    echo '    -d auto_secure         default initial securing of the system'
-    echo '    -h show_help           this'
-    echo '    -q quarantine          kills a user'\'s' processes and archives their files in /home:  -q user'
+    echo '    -p set_passwords       Sets every user'\'s' password:  -p newP@ssw0rd'
+    echo '    -d auto_secure         Default initial securing of the system'
+    echo '    -h show_help           This'
+    echo '    -q quarantine          Kills a user'\'s' processes and archives their files in /home'
     echo '    -f lock_firewall       completely locks down the firewall, all services will be affected'
-    echo '    -i set_interfaces      quickly sets all interfaces up/down:  -i up'
-    echo '    -u new_user            adds a new user with provided password, note quotes:  -u "user password"'
+    echo '    -i set_interfaces      quickly sets all interfaces up/down'
+    echo '    -u new_user            adds a new user with provided password'
     echo '    -v validate_checksums  Check to make sure checksums of critical files haven'\''t changed'
     echo '    -b backup_binaries     Archives a copy of all binaries in /etc/bin, sets PATH to use these,'
     echo '                             also creates /tmp/bin.tar.gz and /tmp/bin.enc '\('w/ password you set'\)''
@@ -71,6 +71,14 @@ if [ "$show_help" = true ]; then
     echo '    -B reset_binaries      Removes and replaces /tmp/bin and /tmp/tar.gz with fresh copeis from'
     echo '                             /tmp/bin.enc, if you'\''ve hidden a copy of bin.enc you must move it'
     echo '                             and rename it to /tmp/bin.enc'
+    echo
+    echo 'Example usages for flags requiring arguments:'
+    echo 
+    echo '		sudo ./ccdc_linux.sh -p "newpassword"       -- Quotes required w/ space in password'
+    echo '		sudo ./ccdc_linux.sh -q username'
+    echo '		sudo ./ccdc_linux.sh -i down'
+    echo '		sudo ./ccdc_linux.sh -u "username password" -- Quotes required'
+    
     
 fi
 
@@ -104,7 +112,36 @@ fi
 # auto_secure performs all default actions to lock down the box 
 if [ "$auto_secure" = true ]; then
 
-	BLUE "Securing the system..."
+	BLUE "Performing the scripted default actions to secure the system..."
+	
+	# Bring down all network interfaces
+	sudo ./ccdc_linux.sh -i down
+	ip addr
+	GREEN "Network interfaces are now down..."
+
+	# Change all user passwords
+	sudo ./ccdc_linux.sh -p "yoda has green ears"
+	GREEN "All user passwords changed..."
+
+	# Create backup accounts
+	sudo ./ccdc_linux.sh -u "han SpaceSmuggler69"
+	sudo ./ccdc_linus.sh -u "kylo FeistyFellaLOL"
+	sudo tail /etc/passwd
+	GREEN "Created backup users..."
+
+	# Backup Binaries
+	sudo ./ccdc_linux.sh -b
+	GREEN "Created backup of all binaries..."
+
+	# Capture initial checksum of critical files
+	sudo ./ccdc_linux.sh -v
+	GREEN "Initial critical file checksums captured..."
+
+	# Leave the user looking at /etc/passwd
+	sudo cat /etc/passwd
+	GREEN "Auto-Secure actions complete..."
+	GREEN "A good next step would be to identify/remove suspicous or unused users..."
+
 fi
 
 # set passwords for all users on the system
