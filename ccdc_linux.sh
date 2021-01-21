@@ -196,13 +196,14 @@ fi
 
 if [ "$backup_binaries" = true ]; then
 	BLUE "Backing up binaries..." && echo
-	sudo mkdir /root/binaries
+	sudo mkdir /tmp/bin
 	IFS=:
 	for directory in $PATH;
 	do
-		mkdir -p /root/binaries$directory
-		sudo cp -r $directory/* /root/binaries$directory
+		sudo cp -r $directory/* /tmp/bin
 	done
+	tar czf /tmp/bin.tar.gz /tmp/bin
+	openssl enc -e -aes-256-cbc -pbkdf2 -in /tmp/bin.tar.gz -out /tmp/b.enc 
 fi
 
 if [ "$reset_binaries" = true ]; then
