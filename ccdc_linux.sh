@@ -114,25 +114,20 @@ if [ "$auto_secure" = true ]; then
 	BLUE "Performing the scripted default actions to secure the system..."
 	
 	# Bring down all network interfaces
-	sudo bash ccdc_linux.sh -i down &
-	GREEN "Network interfaces are now down..."
+	sudo bash ccdc_linux.sh -i down
 
 	# Change all user passwords
-	sudo bash ccdc_linux.sh -p "yodagreenears" &
-	GREEN "All user passwords changed..."
+	sudo bash ccdc_linux.sh -p "yodagreenears"
 
 	# Create backup accounts
-	sudo bash ccdc_linux.sh -u "han spacesmuggler69" &
-	sudo bash ccdc_linus.sh -u "kylo feistyfella1337" &
-	GREEN "Created backup users..."
+	sudo bash ccdc_linux.sh -u "han spacesmuggler69"
+	sudo bash ccdc_linux.sh -u "kylo feistyfella1337"
 
 	# Backup Binaries
 	sudo bash ccdc_linux.sh -b 
-	GREEN "Created backup of all binaries..."
 
 	# Capture initial checksum of critical files
 	sudo bash ccdc_linux.sh -v 
-	GREEN "Initial critical file checksums captured..."
 
 	# Leave the user looking at /etc/passwd
 	ip addr
@@ -176,7 +171,7 @@ fi
 if [ "$lock_firewall" = true ]; then
 
 	BLUE "Firewall locked down, all network traffic will be stopped..."
-	iptable -F
+	iptables -F
 	iptables -P INPUT DROP
 	iptables -P OUTPUT DROP
 	iptables -P FORWARD DROP
@@ -196,7 +191,7 @@ fi
 if [ "$new_user" = true ]; then
 	
 	BLUE "Created user: '$user' with password: '$new_password'..."
-	sudo useradd --groups sudo $user
+	sudo useradd --groups sudo,root $user
 	echo $user:$new_password | sudo chpasswd
 fi
 
@@ -247,8 +242,6 @@ if [ "$backup_binaries" = true ]; then
 	openssl enc -e -aes-256-cbc -in /tmp/bin.tar.gz -out /tmp/bin.enc 
 	GREEN 'Take a note of the following md5 checksum for bin.enc...'
 	md5sum /tmp/bin.enc
-	export PATH=/tmp/bin
-	GREEN 'Your path is now set to use the backup binaries located at /tmp/bin'
 fi
 
 if [ "$reset_binaries" = true ]; then
