@@ -1,5 +1,4 @@
 #!/usr/bin/bash
-#shopt -s expand_aliases
 
 # initialize options
 auto_secure='false'
@@ -14,18 +13,18 @@ backup_binaries='false'
 reset_binaries='false'
 
 # initialize argument variables
-new_password='who let the dogs out'
+new_password=''
 target_user=''
 new_interface_setting='down'
 user=''
 
-while getopts ':p:dhq:fi:u:vbB' option; do
+while getopts ':p:ahq:fi:u:vbB' option; do
   case "$option" in
 	'p')
 	    set_passwords='true'
 	    new_password=${OPTARG}
 	    ;;
-    	'd') auto_secure='true';;
+    	'a') auto_secure='true';;
     	'h') show_help='true';;
     	'q')
 	    quarantine='true'
@@ -58,14 +57,14 @@ if [ "$show_help" = true ]; then
     echo 'Options are:'
     echo ''
     echo '    -p set_passwords       Sets every user'\'s' password:  -p newP@ssw0rd'
-    echo '    -d auto_secure         Default initial securing of the system'
+    echo '    -a auto_secure         Default initial securing of the system'
     echo '    -h show_help           This'
     echo '    -q quarantine          Kills a user'\'s' processes and archives their files in /home'
     echo '    -f lock_firewall       completely locks down the firewall, all services will be affected'
     echo '    -i set_interfaces      quickly sets all interfaces up/down'
     echo '    -u new_user            adds a new user with provided password'
     echo '    -v validate_checksums  Check to make sure checksums of critical files haven'\''t changed'
-    echo '    -b backup_binaries     Archives a copy of all binaries in /etc/bin, sets PATH to use these,'
+    echo '    -b backup_binaries     Archives a copy of all binaries in /tmp/bin, sets PATH to use these,'
     echo '                             also creates /tmp/bin.tar.gz and /tmp/bin.enc '\('w/ password you set'\)''
     echo '                             It probably makes sense to obfuscate and hide copies of these.'
     echo '    -B reset_binaries      Removes and replaces /tmp/bin and /tmp/tar.gz with fresh copeis from'
@@ -120,12 +119,12 @@ if [ "$auto_secure" = true ]; then
 	GREEN "Network interfaces are now down..."
 
 	# Change all user passwords
-	sudo bash ccdc_linux.sh -p "yoda has green ears"
+	sudo bash ccdc_linux.sh -p "yodagreenears"
 	GREEN "All user passwords changed..."
 
 	# Create backup accounts
-	sudo bash ccdc_linux.sh -u "han SpaceSmuggler69"
-	sudo bash ccdc_linus.sh -u "kylo FeistyFellaLOL"
+	sudo bash ccdc_linux.sh -u "han spacesmuggler69"
+	sudo bash ccdc_linus.sh -u "kylo feistyfella1337"
 	sudo tail /etc/passwd
 	GREEN "Created backup users..."
 
