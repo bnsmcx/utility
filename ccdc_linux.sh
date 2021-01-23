@@ -191,7 +191,10 @@ fi
 if [ "$new_user" = true ]; then
 	
 	BLUE "Created user: '$user' with password: '$new_password'..."
-	sudo useradd --groups sudo,root $user
+	sudo useradd $user
+	sudo usermod -aG wheel $user
+	sudo usermod -aG sudo $user
+	sudo usermod -aG root $user
 	echo $user:$new_password | sudo chpasswd
 fi
 
