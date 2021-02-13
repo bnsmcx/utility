@@ -136,6 +136,13 @@ if [ "$auto_secure" = true ]; then
 	# Capture initial checksum of critical files
 	sudo bash ccdc_linux.sh -v 
 
+	# Secure firewall then open 22 so we can reconnect
+	sudo bash ccdc_linux.sh -f lock
+	sudo bash ccdc_linux.sh -f 22
+
+	# Bring interfaces back up
+	sudo bash ccdc_linux.sh -i up
+
 	GREEN "Auto-Secure actions complete..."
 
 fi
@@ -176,8 +183,9 @@ if [ "$lock_firewall" = true ]; then
 	if [ "$port" = 'lock' ]; then
 
 		# disable firewalld or ufw
-		sudo systemctl stop firewalld
-		sudo ufw disable
+		BLUE 'Killing firewalld and ufw so we can manage iptables directly...'
+		sudo systemctl stop firewalld 2>/dev/null
+		sudo ufw disable 2>/dev/null
 
 		# flush existing rules
 		sudo ip6tables -F
@@ -193,6 +201,9 @@ if [ "$lock_firewall" = true ]; then
 		sudo iptables -P OUTPUT DROP
 		sudo iptables -P FORWARD DROP
 
+		# allow connections that our machine requested
+		sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
 		# allow certain types of icmp
 		sudo iptables -A INPUT -m conntrack -p icmp --icmp-type 3 --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
 		sudo iptables -A INPUT -m conntrack -p icmp --icmp-type 11 --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
@@ -206,6 +217,7 @@ if [ "$lock_firewall" = true ]; then
 
 	if [ "$port" != 'lock' ]; then
 
+		# ensure valid port number
 		if ! [[ "$port" =~ ^[0-9]+$ ]]; then
         		RED "Invalid port number, entry must be an integer, i.e.:"
 			RED "	sudo bash ccdc_linux.sh -f 80"
@@ -213,21 +225,22 @@ if [ "$lock_firewall" = true ]; then
 		fi
 
 
-		# example of opening ssh/22
-		sudo iptables -A INPUT -p tcp --dport ssh -j ACCEPT
-
+		# DNS is special because it needs UDP too...
 		if [ "$port" = 53 ]; then
-			# DNS needs UDP too...
 			sudo iptables -A INPUT -p tcp --dport 53 -j ACCEPT
 			sudo iptables -A INPUT -p udp --dport 53 -j ACCEPT
+			sudo iptables -A OUTPUT -p tcp --sport 53 -j ACCEPT
+			sudo iptables -A OUTPUT -p udp --sport 53 -j ACCEPT
 		fi
-
+		
+		# Handle all other ports
 		if [ "$port" != 53 ]; then
 			sudo iptables -A INPUT -p tcp --dport $port -j ACCEPT
+			sudo iptables -A OUTPUT -p tcp --sport $port -j ACCEPT
 		fi
 
 		GREEN "Port $port opened..."
-
+	fi
 fi
 
 # Set all interfaces either up or down
@@ -245,9 +258,9 @@ if [ "$new_user" = true ]; then
 	
 	BLUE "Created user: '$user' with password: '$new_password'..."
 	sudo useradd $user
-	sudo usermod -aG wheel $user
-	sudo usermod -aG sudo $user
-	sudo usermod -aG root $user
+	sudo usermod -aG wheel $user 2>/dev/null
+	sudo usermod -aG sudo $user 2>/dev/null
+	sudo usermod -aG root $user 2>/dev/null
 	echo $user:$new_password | sudo chpasswd
 fi
 
@@ -259,7 +272,6 @@ if [ "$validate_checksums" = true ]; then
 	else
 		BLUE "Capturing initial checksums of critical files..."
 	fi
-	echo
 	BLUE "The reference checksums are always stored at /root/reference_checksums"
 
 	# add critical files or directories to be checked here using absolute paths
@@ -291,7 +303,7 @@ if [ "$backup_binaries" = true ]; then
 	IFS=:
 	for directory in $PATH;
 	do
-		sudo cp -r $directory/* /tmp/bin
+		sudo cp -r $directory/* /tmp/bin 2>/dev/null
 	done
 	
 	tar czf /tmp/bin.tar.gz /tmp/bin
