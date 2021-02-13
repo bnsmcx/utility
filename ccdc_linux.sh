@@ -215,7 +215,19 @@ if [ "$lock_firewall" = true ]; then
 		GREEN "Firewall locked down, all network traffic will be stopped..."
 	fi
 
-	if [ "$port" != 'lock' ]; then
+	# logic to toggle outgoing traffic
+	if [ "$port" = 'out' ]; then
+		if [ "$(sudo iptables -L | grep OUTPUT | cut -d" " -f4 | cut -d")" -f1)" = DROP ]; then
+			sudo iptables -P OUTPUT ACCEPT
+			GREEN "Outgoing traffic permitted..."
+		else
+			sudo iptables -P OUTPUT DROP
+			GREEN "Outgoing traffic denied..."
+		fi
+
+	fi
+
+	if [ "$port" != 'lock' ] && [ "$port" != 'out' ]; then
 
 		# ensure valid port number
 		if ! [[ "$port" =~ ^[0-9]+$ ]]; then
