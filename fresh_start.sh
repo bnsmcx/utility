@@ -66,8 +66,14 @@ if [ "$Initial" = true ]; then
 	BLUE "Upgrading system..."
 	sudo apt upgrade -y
 
+	BLUE "Installing git..."
+	sudo apt install -y git
+
+	BLUE "Pulling 'utility' github repo..."
+	git clone https://github.com/bnsmcx/utility.git
+
 	BLUE "Setting up zsh..."
-	wget "https://raw.githubusercontent.com/bnsmcx/dotfiles/main/.zshrc"
+	cp utility/.zshrc .
 	sudo apt install -y zsh
 	chsh -s $(which zsh)
 
@@ -79,9 +85,6 @@ if [ "$Initial" = true ]; then
 
 	BLUE "Installing tree..."
 	sudo apt install -y tree
-
-	BLUE "Installing git..."
-	sudo apt install -y git
 
 	BLUE "Installing curl..."
 	sudo apt install -y curl
@@ -115,7 +118,7 @@ if [ "$Initial" = true ]; then
 	sudo apt-get install -y virtualbox
 
 	BLUE "Installing Joplin..."
-	wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh --allow-root | bash
+	wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | bash
 
 fi
 
@@ -132,7 +135,7 @@ if [ "$Development" = true ]; then
 	sudo apt install -y snapd
 	# add /snap/bin to PATH
 	echo "PATH=/snap/bin:$PATH" >> $HOME/.profile
-	sudo snap install intellij-idea-community --classic
+	sudo snap install intellij-idea-ultimate --classic
 	export XDG_DATA_DIRS="$XDG_DATA_DIRS:/var/lib/snapd/desktop"
 	export PATH=/snap/bin:$PATH
 	echo "export PATH=/snap/bin:$PATH" >> ~/.zshrc
