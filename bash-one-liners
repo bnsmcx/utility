@@ -35,3 +35,6 @@ cat input.txt | sort | uniq -c | sort -nr
 
 # look for files/directories modified within a certain date range
 find . -type d -newermt "2019-01-01" \! -newermt "2019-02-01" -exec ls -ld {} \;
+
+# Get status of all git repos
+find ~ -name ".git" 2> /dev/null | sed 's/\/.git/\//g' | awk '{print "-------------------------\n\033[1;32mGit Repo:\033[0m " $1; system("git --git-dir="$1".git --work-tree="$1" status")}'
