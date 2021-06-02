@@ -20,3 +20,18 @@ pkill -9 -u `id -u USER_NAME`
 # Set all interfaces up or down
 ip a | grep mtu | cut -d":" -f2 | xargs -I % ip link set % up
 new line of text this is a test for the checksum
+
+# Sort a file based on a specific column, 2 here, and display the top results, 11 here
+cat some_file.txt | sort -k 2 | head -n 11
+
+# do something with each line of a file, here sending one ping packet
+cat some_list_of_hostnames.txt | while read line; do ping -c 1 $line; done
+
+# simple loop to create a wordlist if you know a portion of the flag
+for i in {0000..9999}; do echo FLAG-PREFIX-$i; done
+
+# sort and find the most common line occurance, display most found first, usually used after parsing a log to find most common hosts or something 
+cat input.txt | sort | uniq -c | sort -nr
+
+# look for files/directories modified within a certain date range
+find . -type d -newermt "2019-01-01" \! -newermt "2019-02-01" -exec ls -ld {} \;
