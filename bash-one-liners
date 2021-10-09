@@ -1,3 +1,6 @@
+# Search for media file extensions
+sudo find | grep -E "(mp4|mkv|wmv|flv|webm|mov|avi|mp3|mobi|azw|epub|aax|m4a|m4b|aac|m4p|ogg|wma|flac|alac)$"
+
 # Searches the entire filesystem for 'searchWord' sends errors to /dev/null:
 find / 2>/dev/null | grep searchWord
 

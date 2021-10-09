@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # initialize options
 auto_secure='false'
