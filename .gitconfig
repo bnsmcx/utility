@@ -1,0 +1,7 @@
+[core]
+	editor = vim
+[user]
+	email = ben@ascent-bcs.com
+	name = ben
+[pull]
+	rebase = false
