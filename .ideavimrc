@@ -1,0 +1,51 @@
+"" plugins
+set NERDTree
+set ideajoin
+set commentary
+
+"" Common settings
+set clipboard+=unnamed
+set clipboard+=ideaput
+set scrolloff=5
+set incsearch
+set number relativenumber
+
+"" set leader
+noremap <SPACE> <Nop>
+let mapleader = " "
+
+"" turn on action id tracking
+nnoremap <leader>ai :action VimFindActionIdAction <CR>
+
+"" toggle full screen
+nnoremap <leader>fs :action ToggleFullScreen <CR>
+
+"" open terminal in the current file's directory
+nnoremap <leader>t :action Terminal.OpenInTerminal<CR>
+
+"" useful intellij shortcuts
+nnoremap <leader>ca :action ShowIntentionActions <CR>
+
+"" navigating definitions
+nnoremap <leader>gd :action GotoDeclaration <CR>
+nnoremap <leader>gi :action GotoImplementation <CR>
+
+"" make 'comment line' be the same for a single line in normal mode and multiple lines in visual
+nmap <leader>cl gcc
+vmap <leader>cl gc
+
+"" tabs and windows
+nnoremap <leader>s :action SplitVertically <CR>
+nnoremap <leader>m :action MoveEditorToOppositeTabGroup <CR>
+nnoremap <leader>h :action PreviousTab <CR>
+nnoremap <leader>l :action NextTab <CR>
+nnoremap <leader>wl :action NextSplitter <CR>
+nnoremap <leader>wh :action PrevSplitter <CR>
+
+"" resizing the splits
+nnoremap <c-.> :action StretchSplitToRight <CR>
+nnoremap <c-,> :action StretchSplitToLeft <CR>
+
+"" NERDtree
+nnoremap <leader>ft :NERDTreeToggle <CR>
+
