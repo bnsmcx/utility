@@ -4,13 +4,13 @@
 # Path to your oh-my-zsh installation.
 export ZSH="/home/ben/.oh-my-zsh"
 export PATH="/ascent/google-cloud-sdk/bin:$PATH"
-export GOOGLE_APPLICATION_CREDENTIALS="/home/ben/ascent/keys/ascent-bcs-36ee6c3c2e1b.json"
+export GOOGLE_APPLICATION_CREDENTIALS="/home/ben/ascent/keys/ascent-bcs-28fd2e8d0000.json"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="minimal-ben"
+ZSH_THEME="ben"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -109,3 +109,9 @@ if [ -f '/home/ben/ascent/google-cloud-sdk/path.zsh.inc' ]; then . '/home/ben/as
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/home/ben/ascent/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/ben/ascent/google-cloud-sdk/completion.zsh.inc'; fi
+
+autoload -Uz compinit
+zstyle ':completion:*' menu select
+fpath+=~/.zfunc
+
+
