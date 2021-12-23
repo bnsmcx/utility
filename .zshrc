@@ -102,14 +102,8 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias tree="tree -I '__pycache__|venv'"
-alias kali="ssh -X kali@192.168.56.101"
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/ben/ascent/google-cloud-sdk/path.zsh.inc' ]; then . '/home/ben/ascent/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/ben/ascent/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/ben/ascent/google-cloud-sdk/completion.zsh.inc'; fi
-
+alias kali="ssh -X kali@192.168.222.20"
+alias dev="ssh ben@192.168.222.10"
 autoload -Uz compinit
 zstyle ':completion:*' menu select
 fpath+=~/.zfunc
