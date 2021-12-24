@@ -3,8 +3,7 @@
 
 # Path to your oh-my-zsh installation.
 export ZSH="/home/ben/.oh-my-zsh"
-export PATH="/ascent/google-cloud-sdk/bin:$PATH"
-export GOOGLE_APPLICATION_CREDENTIALS="/home/ben/ascent/keys/ascent-bcs-28fd2e8d0000.json"
+export PATH="/home/ben/.local/bin:$PATH"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
