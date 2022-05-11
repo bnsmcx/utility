@@ -100,11 +100,17 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias tree="tree -I '__pycache__|venv'"
+alias tree="tree -I '__pycache__|venv|target'"
 alias kali="ssh -X kali@192.168.222.20"
 alias dev="ssh ben@192.168.222.10"
+alias vim="nvim"
+alias ct="cargo test"
+alias cr="cargo run"
+alias gs="git status"
+alias gc="git commit -m"
 autoload -Uz compinit
 zstyle ':completion:*' menu select
 fpath+=~/.zfunc
+
 
 

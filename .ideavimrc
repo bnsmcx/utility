@@ -14,17 +14,22 @@ set number relativenumber
 noremap <SPACE> <Nop>
 let mapleader = " "
 
+"" refactoring
+nnoremap <leader>rn :action RenameElement <CR>
+
 "" turn on action id tracking
 nnoremap <leader>ai :action VimFindActionIdAction <CR>
 
-"" toggle full screen
+"" toggle view modes
 nnoremap <leader>fs :action ToggleFullScreen <CR>
+nnoremap <leader>pm :action TogglePresentationMode <CR>
 
 "" open terminal in the current file's directory
 nnoremap <leader>t :action Terminal.OpenInTerminal<CR>
 
 "" useful intellij shortcuts
 nnoremap <leader>ca :action ShowIntentionActions <CR>
+nnoremap <leader>ct :action CloseActiveTab <CR>
 
 "" navigating definitions
 nnoremap <leader>gd :action GotoDeclaration <CR>
@@ -37,14 +42,18 @@ vmap <leader>cl gc
 "" tabs and windows
 nnoremap <leader>s :action SplitVertically <CR>
 nnoremap <leader>m :action MoveEditorToOppositeTabGroup <CR>
-nnoremap <leader>h :action PreviousTab <CR>
-nnoremap <leader>l :action NextTab <CR>
-nnoremap <leader>wl :action NextSplitter <CR>
-nnoremap <leader>wh :action PrevSplitter <CR>
+nnoremap <leader>wl :action PreviousTab <CR>
+nnoremap <leader>wh :action NextTab <CR>
+nnoremap <leader>l :action NextSplitter <CR>
+nnoremap <leader>h :action PrevSplitter <CR>
 
 "" resizing the splits
 nnoremap <c-.> :action StretchSplitToRight <CR>
 nnoremap <c-,> :action StretchSplitToLeft <CR>
+
+"" change font size
+nnoremap <leader>tb :action EditorIncreaseFontSize <CR>
+nnoremap <leader>ts :action EditorDecreaseFontSize <CR>
 
 "" NERDtree
 nnoremap <leader>ft :NERDTreeToggle <CR>
