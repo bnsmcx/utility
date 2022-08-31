@@ -105,5 +105,6 @@ alias vim="nvim"
 alias gs="git status"
 alias gc="git commit -m"
 alias rich="rich --pager"
+alieas less="rich"
 
 
