@@ -24,9 +24,6 @@ nnoremap <leader>ai :action VimFindActionIdAction <CR>
 nnoremap <leader>fs :action ToggleFullScreen <CR>
 nnoremap <leader>pm :action TogglePresentationMode <CR>
 
-"" open terminal in the current file's directory
-nnoremap <leader>t :action Terminal.OpenInTerminal<CR>
-
 "" useful intellij shortcuts
 nnoremap <leader>ca :action ShowIntentionActions <CR>
 nnoremap <leader>ct :action CloseActiveTab <CR>
@@ -40,10 +37,10 @@ nmap <leader>cl gcc
 vmap <leader>cl gc
 
 "" tabs and windows
-nnoremap <leader>s :action SplitVertically <CR>
+nnoremap <leader>s :action MoveTabRight <CR>
 nnoremap <leader>m :action MoveEditorToOppositeTabGroup <CR>
-nnoremap <leader>wl :action PreviousTab <CR>
-nnoremap <leader>wh :action NextTab <CR>
+nnoremap <leader>wh :action PreviousTab <CR>
+nnoremap <leader>wl :action NextTab <CR>
 nnoremap <leader>l :action NextSplitter <CR>
 nnoremap <leader>h :action PrevSplitter <CR>
 
@@ -52,9 +49,8 @@ nnoremap <c-.> :action StretchSplitToRight <CR>
 nnoremap <c-,> :action StretchSplitToLeft <CR>
 
 "" change font size
-nnoremap <leader>tb :action EditorIncreaseFontSize <CR>
-nnoremap <leader>ts :action EditorDecreaseFontSize <CR>
+nnoremap <leader>tb :action EditorIncreaseFontSizeGlobal <CR>
+nnoremap <leader>ts :action EditorDecreaseFontSizeGlobal <CR>
 
 "" NERDtree
 nnoremap <leader>ft :NERDTreeToggle <CR>
-
