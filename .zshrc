@@ -101,10 +101,7 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias tree="tree -I '__pycache__|venv|target'"
-alias vim="nvim"
 alias gs="git status"
 alias gc="git commit -m"
-alias rich="rich --pager"
-alias less="rich"
 
 
