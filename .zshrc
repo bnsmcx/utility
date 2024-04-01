@@ -1,4 +1,5 @@
-# If you come from bash you might have to change your $PATH.
+#
+#If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
@@ -103,5 +104,6 @@ source $ZSH/oh-my-zsh.sh
 alias tree="tree -I '__pycache__|venv|target'"
 alias gs="git status"
 alias gc="git commit -m"
+alias z='zellij options --simplified-ui true'
 
-
+export GPG_TTY=$(tty)
