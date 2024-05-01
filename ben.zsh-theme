@@ -1,6 +1,3 @@
-# ZSH Theme - Preview: https://cl.ly/f701d00760f8059e06dc
-# Thanks to gallifrey, upon whose theme this is based
-
 local return_code="%(?..%{$fg_bold[red]%}%? ↵%{$reset_color%})"
 
 function my_git_prompt_info() {
